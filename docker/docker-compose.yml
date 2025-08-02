@@ -1,25 +1,50 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:8
-    container_name: mysql8-container
+  postgres:
+    image: postgres:13
+    container_name: postgres13-container
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: altentestdb
-      MYSQL_USER: user
-      MYSQL_PASSWORD: userpassword
+      POSTGRES_DB: altentestdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: userpassword
     ports:
-      - "3306:3306"
+      - "5432:5432"
     networks:
       - my-network
     volumes:
-      - mysql-data:/var/lib/mysql
+      - /Users/hijra/docker/postgres-data:/var/lib/postgresql/data
+
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:24.0.1
+#    command: start-dev
+#    container_name: keycloak
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      KEYCLOAK_ADMIN: admin
+#      KEYCLOAK_ADMIN_PASSWORD: admin
+#    networks:
+#      - my-network
+  pgadmin:
+      image: dpage/pgadmin4:8.5
+      container_name: pgadmin-container
+      restart: always
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin@admin.com
+        PGADMIN_DEFAULT_PASSWORD: admin
+      ports:
+        - "5050:80"
+      depends_on:
+        - postgres
+      networks:
+        - my-network
 
 networks:
   my-network:
     driver: bridge
 
 volumes:
-  mysql-data:
+  postgres-data:
     driver: local
+

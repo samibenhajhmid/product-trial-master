@@ -1,28 +1,44 @@
 spring:
   application:
     name: back
+
   datasource:
-    url: jdbc:mysql://localhost:3306/altentestdb
+    url: jdbc:postgresql://localhost:5432/altentestdb
     username: user
     password: userpassword
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
 
   jpa:
     hibernate:
       ddl-auto: update
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-  mysql:
-    datasource:
-      driverClassName: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/altentestdb
-      username: user
-      password: userpassword
-    hibernate:
-      ddl-auto: update
-      show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
   sql:
     init:
-      platform: mysql
+      platform: postgres
 
+  cache:
+    type: redis
+
+  redis:
+    host: localhost
+    port: 6379
+
+backup:
+  pg:
+    user: user
+    password: userpassword
+    db: altentestdb
+    host: localhost
+    port: 5432
+
+  mega:
+    email: dev.samibenhajhmid@gmail.com
+    password: Ss27297426++
+    remoteFolder: /BackupPostgres
+
+  local:
+    backupDir: /tmp/backups

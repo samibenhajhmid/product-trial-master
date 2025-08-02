@@ -6,6 +6,7 @@ import com.alten.domain.Product;
 import com.alten.mapper.ProductMapper;
 import com.alten.repository.ProductRepository;
 import com.alten.service.ProductService;
+import org.springframework.cache.annotation.Cacheable;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "items")
     public List<ProductDTO> getAllProducts() {
 
 
