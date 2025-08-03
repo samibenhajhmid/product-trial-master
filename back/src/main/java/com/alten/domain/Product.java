@@ -27,10 +27,6 @@ public class Product {
     private Integer quantity;
     private String internalReference;
     private Long shellId;
-
-
-    @Enumerated(EnumType.STRING)
-    private InventoryStatus inventoryStatus;
     private Double rating;
     private Long createdAt;
     private Long updatedAt;

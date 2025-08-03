@@ -1,5 +1,7 @@
 package com.alten.DTO;
 
+
+
 public record ProductDTO(
         Long id,
         String code,
@@ -11,7 +13,6 @@ public record ProductDTO(
         Integer quantity,
         String internalReference,
         Long shellId,
-        String inventoryStatus,
         Double rating,
         Long createdAt,
         Long updatedAt

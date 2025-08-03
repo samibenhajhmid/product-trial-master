@@ -2,11 +2,15 @@ package com.alten.domain;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 
 @Entity(name = "wishlist_items")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class WishlistItem {
 
     @Id

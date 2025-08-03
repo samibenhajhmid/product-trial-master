@@ -1,0 +1,79 @@
+stages:
+  - build
+  - test
+  - dockerize
+  - deploy
+
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  APP_NAME: myapp
+  SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
+  REMOTE_USER: debian
+  REMOTE_HOST: 192.168.1.100
+  REMOTE_DIR: /home/debian/myapp
+
+before_script:
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - ssh-keyscan -H "$REMOTE_HOST" >> ~/.ssh/known_hosts
+
+# 📦 BUILD
+
+build_backend:
+  stage: build
+  script:
+    - cd backend
+    - ./mvnw clean install -DskipTests
+
+build_frontend:
+  stage: build
+  script:
+    - cd frontend
+    - npm install
+    - npm run build --prod
+
+# ✅ TEST
+
+test_backend:
+  stage: test
+  script:
+    - cd backend
+    - ./mvnw test
+
+test_frontend:
+  stage: test
+  script:
+    - cd frontend
+    - npm install
+    - npm run test -- --watch=false
+
+# 🐳 DOCKERIZE
+
+dockerize_backend:
+  stage: dockerize
+  script:
+    - docker build -f docker/backend.Dockerfile -t $APP_NAME-backend .
+
+dockerize_frontend:
+  stage: dockerize
+  script:
+    - docker build -f docker/frontend.Dockerfile -t $APP_NAME-frontend .
+
+# 🚀 DEPLOY
+
+deploy:
+  stage: deploy
+  only:
+    - main
+  script:
+    - echo "Déploiement sur $REMOTE_HOST ..."
+    - ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p $REMOTE_DIR"
+    - scp docker/docker-compose.yml $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/
+    - ssh $REMOTE_USER@$REMOTE_HOST "
+      cd $REMOTE_DIR &&
+      docker-compose down &&
+      docker-compose up -d --build
+      "
